@@ -8,10 +8,9 @@
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   <script src="https://raw.githack.com/fcor/arjs-gestures/master/dist/gestures.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; font-family: 'Poppins', sans-serif; background: #f5e4b8; }
+    body { margin: 0; overflow: hidden; font-family: system-ui, -apple-system, Arial, sans-serif; background: #f5e4b8; }
 
     #startScreen {
       position: fixed; inset: 0; display: flex; flex-direction: column;
@@ -20,41 +19,44 @@
       padding: 6vh 5vw; box-sizing: border-box; overflow-y: auto; z-index: 1000;
     }
 
-    #startScreen h1 { font-size: clamp(26px, 6vw, 36px); font-weight: 800; color: #3b3820; margin-bottom: 2vh; }
-    #startScreen p { font-size: clamp(14px, 4vw, 17px); color: #3b3820; line-height: 1.5em; max-width: 420px; margin: 1.2vh 0; }
+    #startScreen h1 { font-size: clamp(26px, 6vw, 36px); font-weight: 800; color: #3b3820; margin: 0 0 12px; }
+    #startScreen p { font-size: clamp(14px, 4vw, 17px); color: #3b3820; line-height: 1.45em; max-width: 420px; margin: 10px 0; }
 
     .marker-card {
       display: flex; flex-direction: column; align-items: center;
-      background: linear-gradient(20deg, #fff8e1 0%, #f1e0b0 100%);
-      border-radius: 18px; padding: 18px; margin: 15px 0 23px 0;
-      width: 85%; max-width: 320px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 18px; padding: 14px; margin: 12px 0 18px;
+      width: 85%; max-width: 320px; backdrop-filter: blur(6px);
+      border: 1px solid rgba(0,0,0,0.08);
     }
 
-    .marker-title { font-weight: 600; font-size: clamp(14px, 4vw, 16px); color: #4c3b16; margin-bottom: 10px; }
+    .marker-title { font-weight: 700; font-size: 14px; color: #4c3b16; margin: 0 0 10px; }
 
     .marker-frame {
-      background: #fdf6e3; border: 3px solid #d4b673; border-radius: 12px;
+      background: #fff; border: 3px solid #111; border-radius: 12px;
       padding: 8px; display: flex; justify-content: center; align-items: center;
+      width: 100%;
     }
 
     .marker-img {
-      width: 100%; max-width: 220px; aspect-ratio: 1 / 1;
-      object-fit: contain; border-radius: 10px; background: #fff;
+      width: 100%; max-width: 240px; aspect-ratio: 1 / 1;
+      object-fit: contain; border-radius: 8px; background: #fff;
     }
 
     #startBtn {
-      margin-top: 3vh; padding: 1em 2.8em; font-size: clamp(15px, 4vw, 18px);
+      margin-top: 10px; padding: 12px 22px; font-size: 16px;
       border: none; border-radius: 12px;
-      background: linear-gradient(160deg, #f6d36b, #d5a55a);
-      color: #3b2b1f; font-weight: 700; cursor: pointer;
+      background: #1f1b12; color: #fff; font-weight: 800; cursor: pointer;
     }
 
-    .instruction {
-      position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.5); color: white;
-      padding: 6px 12px; border-radius: 10px;
-      font-size: clamp(10px, 3vw, 14px); z-index: 999;
+    .hud {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.65); color: #fff;
+      padding: 8px 12px; border-radius: 10px;
+      font-size: 13px; z-index: 999; white-space: nowrap;
     }
+    #status { top: 10px; }
+    #hint { bottom: 10px; }
   </style>
 </head>
 
@@ -62,63 +64,80 @@
   <div id="startScreen">
     <h1>🌿 Experiência AR</h1>
 
-    <p><b>Passo 1:</b> Imprima ou tire um print do marcador abaixo 👇</p>
+    <p><b>Passo 1:</b> Use o marcador COM BORDA PRETA (tem que ser exatamente a imagem que gerou o .patt).</p>
 
     <div class="marker-card">
-      <p class="marker-title">🪑 Marcador</p>
+      <p class="marker-title">🪑 Marcador (mostre este para a câmera)</p>
       <div class="marker-frame">
-        <!-- use esta imagem COM BORDA PRETA (a que você baixou como marker image/pdf) -->
         <img src="assets/movel.png" alt="Marcador do projeto" class="marker-img">
       </div>
     </div>
 
-    <p><b>Passo 2:</b> Toque em <b>Começar</b> e direcione a câmera para o marcador.</p>
-
-    <p><b>Passo 3:</b> Interaja com o modelo 3D:<br>
-      👉 Toque com um dedo para girar<br>
-      👉 Use dois dedos para ajustar o tamanho
-    </p>
+    <p><b>Passo 2:</b> Toque em <b>Começar</b> e aponte a câmera para o marcador.</p>
 
     <button id="startBtn">Começar</button>
   </div>
+
+  <div class="hud" id="status">⏳ Carregando câmera e arquivos...</div>
+  <div class="hud" id="hint">📌 Dica: boa luz, sem reflexo, marcador bem plano.</div>
 
   <a-scene
     embedded
     renderer="antialias: true; alpha: true"
     gesture-detector
-    arjs="sourceType: webcam; debugUIEnabled: true;"
+    arjs="sourceType: webcam; debugUIEnabled: false;"
   >
-    <a-entity camera="active: true"></a-entity>
+    <a-assets>
+      <a-asset-item id="modelGLB" src="assets/refresh_02_1.glb"></a-asset-item>
+    </a-assets>
 
-    <!-- ✅ PATTERN marker (.patt) -->
-    <a-marker type="pattern" url="assets/movel.patt">
+    <a-entity camera></a-entity>
+
+    <a-marker type="pattern" url="assets/movel.patt" id="marker" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
       <a-entity
         id="model"
-        gltf-model="url(assets/refresh_02_1.glb)"
-        scale="0.8 0.8 0.8"
-        position="0 0.2 0"
+        gltf-model="#modelGLB"
+        scale="0.9 0.9 0.9"
+        position="0 0 0"
         rotation="-90 0 0"
-        gesture-handler="minScale: 0.1; maxScale: 2;"
+        gesture-handler="minScale: 0.2; maxScale: 3;"
       ></a-entity>
 
-      <a-light type="ambient" color="#ffffff" intensity="2"></a-light>
+      <a-light type="ambient" intensity="2"></a-light>
       <a-light type="directional" intensity="1" position="0 3 2"></a-light>
     </a-marker>
   </a-scene>
 
-  <div class="instruction">👉 Aponte a câmera para o marcador (com borda preta)</div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const startBtn = document.getElementById('startBtn');
+      const startScreen = document.getElementById('startScreen');
+      const status = document.getElementById('status');
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const startBtn = document.getElementById('startBtn');
-    const startScreen = document.getElementById('startScreen');
+      const marker = document.getElementById('marker');
+      const asset = document.getElementById('modelGLB');
 
-    if (startBtn && startScreen) {
+      // some feedback about model loading
+      asset.addEventListener('loaded', () => {
+        status.textContent = '✅ Modelo carregado. Aponte para o marcador.';
+      });
+      asset.addEventListener('error', () => {
+        status.textContent = '❌ Erro ao carregar o modelo (GLB). Verifique o nome/arquivo.';
+      });
+
+      marker.addEventListener('markerFound', () => {
+        status.textContent = '✅ Marcador detectado!';
+      });
+
+      marker.addEventListener('markerLost', () => {
+        status.textContent = '📷 Procurando marcador...';
+      });
+
       startBtn.addEventListener('click', () => {
         startScreen.style.display = "none";
+        status.textContent = '📷 Abrindo câmera...';
       });
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
