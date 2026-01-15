@@ -11,107 +11,50 @@
   <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: 'Poppins', sans-serif;
-      background: #f5e4b8;
-    }
+    body { margin: 0; overflow: hidden; font-family: 'Poppins', sans-serif; background: #f5e4b8; }
 
     #startScreen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
       background: linear-gradient(180deg, #a8d5a2 0%, #f2e0a2 45%, #f6c86e 100%);
-      padding: 6vh 5vw;
-      box-sizing: border-box;
-      overflow-y: auto;
-      z-index: 1000;
+      padding: 6vh 5vw; box-sizing: border-box; overflow-y: auto; z-index: 1000;
     }
 
-    #startScreen h1 {
-      font-size: clamp(26px, 6vw, 36px);
-      font-weight: 800;
-      color: #3b3820;
-      margin-bottom: 2vh;
-    }
-
-    #startScreen p {
-      font-size: clamp(14px, 4vw, 17px);
-      color: #3b3820;
-      line-height: 1.5em;
-      max-width: 420px;
-      margin: 1.2vh 0;
-    }
+    #startScreen h1 { font-size: clamp(26px, 6vw, 36px); font-weight: 800; color: #3b3820; margin-bottom: 2vh; }
+    #startScreen p { font-size: clamp(14px, 4vw, 17px); color: #3b3820; line-height: 1.5em; max-width: 420px; margin: 1.2vh 0; }
 
     .marker-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       background: linear-gradient(20deg, #fff8e1 0%, #f1e0b0 100%);
-      border-radius: 18px;
-      padding: 18px;
-      margin: 15px 0 23px 0;
-      width: 85%;
-      max-width: 320px;
+      border-radius: 18px; padding: 18px; margin: 15px 0 23px 0;
+      width: 85%; max-width: 320px;
     }
 
-    .marker-title {
-      font-weight: 600;
-      font-size: clamp(14px, 4vw, 16px);
-      color: #4c3b16;
-      margin-bottom: 10px;
-    }
+    .marker-title { font-weight: 600; font-size: clamp(14px, 4vw, 16px); color: #4c3b16; margin-bottom: 10px; }
 
     .marker-frame {
-      background: #fdf6e3;
-      border: 3px solid #d4b673;
-      border-radius: 12px;
-      padding: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: #fdf6e3; border: 3px solid #d4b673; border-radius: 12px;
+      padding: 8px; display: flex; justify-content: center; align-items: center;
     }
 
     .marker-img {
-      width: 100%;
-      max-width: 220px;
-      aspect-ratio: 1 / 1;
-      object-fit: contain;
-      border-radius: 10px;
-      background: #fff;
+      width: 100%; max-width: 220px; aspect-ratio: 1 / 1;
+      object-fit: contain; border-radius: 10px; background: #fff;
     }
 
     #startBtn {
-      margin-top: 3vh;
-      padding: 1em 2.8em;
-      font-size: clamp(15px, 4vw, 18px);
-      border: none;
-      border-radius: 12px;
+      margin-top: 3vh; padding: 1em 2.8em; font-size: clamp(15px, 4vw, 18px);
+      border: none; border-radius: 12px;
       background: linear-gradient(160deg, #f6d36b, #d5a55a);
-      color: #3b2b1f;
-      font-weight: 700;
-      cursor: pointer;
+      color: #3b2b1f; font-weight: 700; cursor: pointer;
     }
 
-    .credit, .instruction {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: clamp(10px, 3vw, 14px);
-      z-index: 999;
+    .instruction {
+      position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.5); color: white;
+      padding: 6px 12px; border-radius: 10px;
+      font-size: clamp(10px, 3vw, 14px); z-index: 999;
     }
-
-    .credit { bottom: 10px; }
-    .instruction { top: 10px; }
   </style>
 </head>
 
@@ -124,6 +67,7 @@
     <div class="marker-card">
       <p class="marker-title">🪑 Marcador</p>
       <div class="marker-frame">
+        <!-- use esta imagem COM BORDA PRETA (a que você baixou como marker image/pdf) -->
         <img src="assets/movel.png" alt="Marcador do projeto" class="marker-img">
       </div>
     </div>
@@ -142,59 +86,39 @@
     embedded
     renderer="antialias: true; alpha: true"
     gesture-detector
-    arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;"
+    arjs="sourceType: webcam; debugUIEnabled: true;"
   >
-    <a-entity camera></a-entity>
+    <a-entity camera="active: true"></a-entity>
 
-    <a-marker
-      type="nft"
-      url="assets/nft/movel/movel"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance="0.01"
-      smoothThreshold="5"
-    >
+    <!-- ✅ PATTERN marker (.patt) -->
+    <a-marker type="pattern" url="assets/movel.patt">
       <a-entity
         id="model"
         gltf-model="url(assets/refresh_02_1.glb)"
-        scale="0.2 0.2 0.2"
-        position="0 0 0"
-        rotation="0 0 0"
-        gesture-handler="minScale: 0.1; maxScale: 1;"
-        animation-mixer="clip:*; loop: repeat; autoplay: false;"
+        scale="0.8 0.8 0.8"
+        position="0 0.2 0"
+        rotation="-90 0 0"
+        gesture-handler="minScale: 0.1; maxScale: 2;"
       ></a-entity>
 
       <a-light type="ambient" color="#ffffff" intensity="2"></a-light>
-      <a-light type="directional" intensity="0.8" position="-1 4 5"></a-light>
+      <a-light type="directional" intensity="1" position="0 3 2"></a-light>
     </a-marker>
   </a-scene>
 
-  <div class="instruction">👉 Toque no objeto para iniciar/parar a animação</div>
+  <div class="instruction">👉 Aponte a câmera para o marcador (com borda preta)</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const model = document.querySelector('#model');
-      const startBtn = document.getElementById('startBtn');
-      const startScreen = document.getElementById('startScreen');
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('startBtn');
+    const startScreen = document.getElementById('startScreen');
 
-      let isPlaying = false;
-      let rotation = { x: 0, y: 0, z: 0 };
-
-      model.addEventListener('click', () => {
-        model.setAttribute('animation-mixer', { timeScale: isPlaying ? 0 : 1 });
-        isPlaying = !isPlaying;
-      });
-
-      model.addEventListener("onefingermove", (event) => {
-        rotation.x += event.detail.positionChange.y * 0.5;
-        rotation.y += event.detail.positionChange.x * 0.5;
-        model.setAttribute("rotation", `${rotation.x} ${rotation.y} ${rotation.z}`);
-      });
-
+    if (startBtn && startScreen) {
       startBtn.addEventListener('click', () => {
         startScreen.style.display = "none";
       });
-    });
-  </script>
+    }
+  });
+</script>
 </body>
 </html>
