@@ -18,38 +18,36 @@
     video, canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: none; }
     a-scene{ position:fixed; inset:0; z-index:2; pointer-events:none;}
 
-    /* ESTILOS VISUAIS */
     .hint {
-        position: fixed; bottom: 140px; left: 50%; transform: translateX(-50%);
-        padding: 12px 24px; border-radius: 30px;
-        font-size: 13px; font-weight: 500;
-        z-index: 10; text-align: center; pointer-events: none;
-        width: max-content; max-width: 85%;
-        background: rgba(20, 20, 20, 0.3);
-        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: white;
+      position: fixed; bottom: 140px; left: 50%; transform: translateX(-50%);
+      padding: 12px 24px; border-radius: 30px;
+      font-size: 13px; font-weight: 500;
+      z-index: 10; text-align: center; pointer-events: none;
+      width: max-content; max-width: 85%;
+      background: rgba(20, 20, 20, 0.3);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
     }
 
     .glass-btn {
-        position: fixed; z-index: 100;
-        display: flex; align-items: center; justify-content: center; gap: 8px;
-        padding: 12px 24px; text-decoration: none;
-        font-weight: 600; font-size: 14px;
-        border-radius: 50px;
-        transition: all 0.3s ease;
-        cursor: pointer; user-select: none;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      position: fixed; z-index: 100;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 24px; text-decoration: none;
+      font-weight: 600; font-size: 14px;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      cursor: pointer; user-select: none;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     }
     .glass-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
     #backBtn { top: 20px; left: 20px; }
 
-    /* Botao de informacoes */
     #infoBtn {
       top: 20px;
       right: 20px;
@@ -62,52 +60,15 @@
     }
 
     #pinBtn {
-        bottom: 30px; left: 50%; transform: translateX(-50%);
-        width: max-content;
+      bottom: 30px; left: 50%; transform: translateX(-50%);
+      width: max-content;
     }
     #pinBtn.pinned {
-        background: rgba(255, 50, 50, 0.25); border-color: rgba(255, 100, 100, 0.6);
-        box-shadow: 0 0 15px rgba(255, 50, 50, 0.3);
+      background: rgba(255, 50, 50, 0.25); border-color: rgba(255, 100, 100, 0.6);
+      box-shadow: 0 0 15px rgba(255, 50, 50, 0.3);
     }
 
-    /* CONTROLE DE VELOCIDADE + PAUSE */
-    #controlsContainer {
-        display: none;
-        position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-        z-index: 100;
-        width: 90%; max-width: 350px;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        padding: 15px 20px; border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-
-        display: flex;
-        align-items: center; gap: 15px;
-        color: white; font-size: 12px; font-weight: bold;
-    }
-
-    #pauseBtn {
-        background: rgba(255,255,255,0.2);
-        border: 1px solid rgba(255,255,255,0.4);
-        border-radius: 50%; width: 40px; height: 40px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 18px; cursor: pointer;
-    }
-
-    .slider-wrapper { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
-
-    input[type=range] { width: 100%; -webkit-appearance: none; appearance: none; background: transparent; }
-    input[type=range]::-webkit-slider-thumb {
-        -webkit-appearance: none; height: 20px; width: 20px;
-        border-radius: 50%; background: #ffffff;
-        cursor: pointer; margin-top: -8px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    input[type=range]::-webkit-slider-runnable-track {
-        width: 100%; height: 4px; cursor: pointer;
-        background: rgba(255,255,255,0.3); border-radius: 2px;
-    }
-
-    /* MODAL DE INFORMACOES */
+    /* MODAL */
     .info-modal {
       position: fixed;
       inset: 0;
@@ -135,31 +96,10 @@
       box-shadow: 0 12px 30px rgba(0,0,0,0.45);
     }
 
-    .info-content h2 {
-      margin: 8px 0 10px 0;
-      font-size: 18px;
-    }
-
-    .info-content h3 {
-      margin: 16px 0 8px 0;
-      font-size: 14px;
-      opacity: 0.95;
-    }
-
-    .info-content p {
-      margin: 0 0 10px 0;
-      font-size: 13px;
-      line-height: 1.45;
-      opacity: 0.95;
-    }
-
-    .info-content ul {
-      margin: 0;
-      padding-left: 18px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
+    .info-content h2 { margin: 8px 0 10px 0; font-size: 18px; }
+    .info-content h3 { margin: 16px 0 8px 0; font-size: 14px; opacity: 0.95; }
+    .info-content p { margin: 0 0 10px 0; font-size: 13px; line-height: 1.45; opacity: 0.95; }
+    .info-content ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.5; }
     .info-content li { margin: 6px 0; }
 
     .info-content a {
@@ -168,8 +108,6 @@
       font-weight: 600;
       word-break: break-word;
     }
-
-    .info-content a:active { opacity: 0.85; }
 
     #closeInfo {
       position: absolute;
@@ -201,7 +139,6 @@
       opacity: 0.95;
     }
 
-    /* Imagem do cartao (girls.png) */
     .card-asset {
       width: min(220px, 70%);
       display: block;
@@ -212,33 +149,15 @@
       box-shadow: 0 10px 22px rgba(0,0,0,0.35);
     }
 
-    .muted {
-      font-size: 12px;
-      opacity: 0.85;
-      margin-top: 6px;
-    }
+    .muted { font-size: 12px; opacity: 0.85; margin-top: 6px; }
   </style>
 </head>
 <body>
 
   <a href="modelos.html" id="backBtn" class="glass-btn">← Voltar</a>
 
-  <!-- Botao de informacoes -->
   <button id="infoBtn" class="glass-btn" aria-label="Informações do projeto" title="Informações">ℹ️</button>
-
   <button id="pinBtn" class="glass-btn">📍 Fixar Posição</button>
-
-  <div id="controlsContainer" style="display: none;">
-      <button id="pauseBtn">⏸️</button>
-
-      <div class="slider-wrapper">
-          <div style="display:flex; justify-content:space-between; width:100%;">
-              <span>Lento</span>
-              <span>Rápido</span>
-          </div>
-          <input type="range" id="animSpeed" min="0.1" max="3.0" step="0.1" value="1">
-      </div>
-  </div>
 
   <div class="media-container">
     <video id="inputVideo" playsinline muted></video>
@@ -246,39 +165,37 @@
   </div>
 
   <div class="hint" id="hintText">
-    Bem vido a nossa experiência em AR! O móvel nascerá no centro da palma, utilize o polegar e o indicador para controlar a escala!
+    Bem vindo! Mostre a mão para o móvel aparecer. Ao fixar, arraste o dedo para girar no eixo Y.
   </div>
 
   <a-scene embedded vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
     <a-entity id="cam" camera="near:0.01; far:100; fov: 70" position="0 0 0"></a-entity>
 
     <a-entity id="arObject" position="0 0 -2" visible="false">
-        <a-entity id="flower"
-                  gltf-model="assets/rosa.glb"
-                  scale="0 0 0"
-                  position="0 0 0"
-                  rotation="50 0 0"
-                  animation-mixer="clip: *; loop: repeat; timeScale: 1">
-        </a-entity>
+      <a-entity id="flower"
+                gltf-model="assets/rosa.glb"
+                scale="0 0 0"
+                position="0 0 0"
+                rotation="50 0 0">
+      </a-entity>
     </a-entity>
 
     <a-entity light="type:ambient; intensity:1.5;"></a-entity>
     <a-entity light="type:directional; intensity:2;" position="1 4 3"></a-entity>
   </a-scene>
 
-  <!-- Modal de informacoes -->
+  <!-- Modal -->
   <div id="infoModal" class="info-modal" aria-hidden="true">
     <div class="info-content" role="dialog" aria-modal="true" aria-label="Informações do projeto">
       <button id="closeInfo" aria-label="Fechar">✕</button>
 
       <h2>🦋 Bem-vindo ao nosso cartão visita</h2>
-
       <img class="card-asset" src="assets/girls.png" alt="MobiliAR Girls" />
 
       <p>
         O <strong>Móveis Pro-AR</strong> é uma experiência em Realidade Aumentada que permite visualizar móveis em 3D no seu ambiente real,
-  direto pelo navegador. Com poucos toques, você posiciona, ajusta o tamanho e explora o modelo no espaço,
-  facilitando a decisão de compra e ajudando a imaginar como o móvel vai ficar antes de escolher.
+        direto pelo navegador. Com poucos toques, você posiciona, ajusta o tamanho e explora o modelo no espaço,
+        facilitando a decisão de compra e ajudando a imaginar como o móvel vai ficar antes de escolher.
       </p>
 
       <div class="info-chip">Dica: abra no Chrome para melhor desempenho.</div>
@@ -322,18 +239,14 @@
     const videoElement = document.getElementById('inputVideo');
     const canvasElement = document.getElementById('outputCanvas');
     const canvasCtx = canvasElement.getContext('2d');
+
     const arObject = document.getElementById('arObject');
     const flower = document.getElementById('flower');
     const pinBtn = document.getElementById('pinBtn');
     const hintText = document.getElementById('hintText');
     const camEl = document.getElementById('cam');
 
-    // Controles UI
-    const controlsContainer = document.getElementById('controlsContainer');
-    const speedSlider = document.getElementById('animSpeed');
-    const pauseBtn = document.getElementById('pauseBtn');
-
-    // Modal info
+    // Modal
     const infoBtn = document.getElementById('infoBtn');
     const infoModal = document.getElementById('infoModal');
     const closeInfo = document.getElementById('closeInfo');
@@ -342,119 +255,105 @@
     let currentScale = 0;
     let isPinned = false;
     let startX = 0;
-    let isPaused = false;
 
-    // Abrir modal
+    // Modal open/close
     infoBtn.addEventListener('click', () => {
       infoModal.style.display = 'flex';
       infoModal.setAttribute('aria-hidden', 'false');
     });
 
-    // Fechar modal
     function closeModal() {
       infoModal.style.display = 'none';
       infoModal.setAttribute('aria-hidden', 'true');
     }
 
     closeInfo.addEventListener('click', closeModal);
+    infoModal.addEventListener('click', (e) => { if (e.target === infoModal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && infoModal.style.display === 'flex') closeModal(); });
 
-    // Fecha clicando fora do conteudo
-    infoModal.addEventListener('click', (e) => {
-      if (e.target === infoModal) closeModal();
-    });
+    // Rotacao manual SOMENTE no eixo Y quando fixado
+    document.addEventListener('touchstart', (e) => {
+      if (isPinned) startX = e.touches[0].clientX;
+    }, { passive: true });
 
-    // Fecha com ESC (desktop)
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && infoModal.style.display === 'flex') closeModal();
-    });
-
-    // Logica pause/play
-    pauseBtn.addEventListener('click', () => {
-        isPaused = !isPaused;
-        if (isPaused) {
-            pauseBtn.innerText = "▶️";
-            flower.setAttribute('animation-mixer', 'timeScale', 0);
-        } else {
-            pauseBtn.innerText = "⏸️";
-            flower.setAttribute('animation-mixer', 'timeScale', speedSlider.value);
-        }
-    });
-
-    // Logica slider
-    speedSlider.addEventListener('input', (e) => {
-        if (!isPaused) {
-            flower.setAttribute('animation-mixer', 'timeScale', e.target.value);
-        }
-    });
-
-    // Touch rotacao quando fixado
-    document.addEventListener('touchstart', (e) => { if(isPinned) startX = e.touches[0].clientX; }, {passive:true});
     document.addEventListener('touchmove', (e) => {
-        if (isPinned) {
-            const deltaX = e.touches[0].clientX - startX;
-            flower.object3D.rotation.y += deltaX * 0.01;
-            startX = e.touches[0].clientX;
-        }
-    }, {passive:true});
+      if (!isPinned) return;
+
+      const deltaX = e.touches[0].clientX - startX;
+      flower.object3D.rotation.y += deltaX * 0.01; // eixo Y
+      startX = e.touches[0].clientX;
+    }, { passive: true });
 
     pinBtn.addEventListener('click', () => {
-        const isVisible = arObject.getAttribute('visible');
-        if (!isVisible && !isPinned) { alert("Mostre a mão primeiro!"); return; }
+      const isVisible = arObject.getAttribute('visible');
+      if (!isVisible && !isPinned) {
+        alert("Mostre a mão primeiro!");
+        return;
+      }
 
-        isPinned = !isPinned;
+      isPinned = !isPinned;
 
-        if (isPinned) {
-            pinBtn.innerText = "🔓 Soltar";
-            pinBtn.classList.add('pinned');
-            hintText.style.display = 'none';
-            controlsContainer.style.display = 'flex';
-        } else {
-            pinBtn.innerText = "📍 Fixar";
-            pinBtn.classList.remove('pinned');
-            hintText.style.display = 'block';
-            controlsContainer.style.display = 'none';
-        }
+      if (isPinned) {
+        pinBtn.innerText = "🔓 Soltar";
+        pinBtn.classList.add('pinned');
+        hintText.style.display = 'none';
+      } else {
+        pinBtn.innerText = "📍 Fixar Posição";
+        pinBtn.classList.remove('pinned');
+        hintText.style.display = 'block';
+      }
     });
 
-    // Logica AR
     function getTriangleCenter(landmarks) {
-        const p0 = landmarks[0];
-        const p5 = landmarks[5];
-        const p17 = landmarks[17];
-        return { x: (p0.x + p5.x + p17.x) / 3, y: (p0.y + p5.y + p17.y) / 3 };
+      const p0 = landmarks[0];
+      const p5 = landmarks[5];
+      const p17 = landmarks[17];
+      return { x: (p0.x + p5.x + p17.x) / 3, y: (p0.y + p5.y + p17.y) / 3 };
     }
 
     function getHandAperture(landmarks) {
-        const dx = landmarks[4].x - landmarks[8].x;
-        const dy = landmarks[4].y - landmarks[8].y;
-        let scale = Math.max(0, (Math.sqrt(dx*dx + dy*dy) - 0.02) * 15);
-        return Math.min(scale, 0.8);
+      const dx = landmarks[4].x - landmarks[8].x;
+      const dy = landmarks[4].y - landmarks[8].y;
+      let scale = Math.max(0, (Math.sqrt(dx*dx + dy*dy) - 0.02) * 15);
+      return Math.min(scale, 0.8);
     }
 
     function updateAR(landmarks) {
-        if (isPinned) return;
+      if (isPinned) return;
 
-        arObject.setAttribute('visible', true);
-        const center = getTriangleCenter(landmarks);
-        const threeCamera = camEl.getObject3D('camera');
-        const ndcX = (center.x * 2) - 1;
-        const ndcY = -(center.y * 2) + 1;
-        const vector = new THREE.Vector3(ndcX, ndcY, 0.5);
-        vector.unproject(threeCamera);
-        const dir = vector.sub(threeCamera.position).normalize();
-        const distance = 2;
-        const targetPos = threeCamera.position.clone().add(dir.multiplyScalar(distance));
+      arObject.setAttribute('visible', true);
 
-        currentPos.lerp(targetPos, 0.2);
-        arObject.object3D.position.copy(currentPos);
+      const center = getTriangleCenter(landmarks);
+      const threeCamera = camEl.getObject3D('camera');
 
-        const targetScale = getHandAperture(landmarks);
-        currentScale += (targetScale - currentScale) * 0.15;
-        flower.object3D.scale.set(currentScale, currentScale, currentScale);
+      const ndcX = (center.x * 2) - 1;
+      const ndcY = -(center.y * 2) + 1;
+
+      const vector = new THREE.Vector3(ndcX, ndcY, 0.5);
+      vector.unproject(threeCamera);
+
+      const dir = vector.sub(threeCamera.position).normalize();
+      const distance = 2;
+      const targetPos = threeCamera.position.clone().add(dir.multiplyScalar(distance));
+
+      currentPos.lerp(targetPos, 0.2);
+      arObject.object3D.position.copy(currentPos);
+
+      const targetScale = getHandAperture(landmarks);
+      currentScale += (targetScale - currentScale) * 0.15;
+      flower.object3D.scale.set(currentScale, currentScale, currentScale);
     }
 
-    const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-    hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 0,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
 
     hands.onResults(results => {
       canvasElement.width = videoElement.videoWidth;
@@ -465,29 +364,37 @@
         const landmarks = results.multiHandLandmarks[0];
 
         if (!isPinned) {
-            const p0 = landmarks[0]; const p5 = landmarks[5]; const p17 = landmarks[17];
-            canvasCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
-            [p0, p5, p17].forEach(p => {
-                canvasCtx.beginPath();
-                canvasCtx.arc(p.x * canvasElement.width, p.y * canvasElement.height, 3, 0, 2 * Math.PI);
-                canvasCtx.fill();
-            });
-            const center = getTriangleCenter(landmarks);
+          const p0 = landmarks[0], p5 = landmarks[5], p17 = landmarks[17];
+          canvasCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
+          [p0, p5, p17].forEach(p => {
             canvasCtx.beginPath();
-            canvasCtx.arc(center.x * canvasElement.width, center.y * canvasElement.height, 4, 0, 2 * Math.PI);
-            canvasCtx.fillStyle = "rgba(255, 255, 0, 0.5)";
+            canvasCtx.arc(p.x * canvasElement.width, p.y * canvasElement.height, 3, 0, 2 * Math.PI);
             canvasCtx.fill();
+          });
+
+          const center = getTriangleCenter(landmarks);
+          canvasCtx.beginPath();
+          canvasCtx.arc(center.x * canvasElement.width, center.y * canvasElement.height, 4, 0, 2 * Math.PI);
+          canvasCtx.fillStyle = "rgba(255, 255, 0, 0.5)";
+          canvasCtx.fill();
         }
+
         updateAR(landmarks);
       } else {
-        if (!isPinned) { arObject.setAttribute('visible', false); currentScale = 0; }
+        if (!isPinned) {
+          arObject.setAttribute('visible', false);
+          currentScale = 0;
+        }
       }
     });
 
     const camera = new Camera(videoElement, {
       onFrame: async () => { await hands.send({image: videoElement}); },
-      width: 640, height: 480, facingMode: 'environment'
+      width: 640,
+      height: 480,
+      facingMode: 'environment'
     });
+
     camera.start();
   </script>
 </body>
