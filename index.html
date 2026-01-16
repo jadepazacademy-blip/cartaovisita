@@ -236,7 +236,7 @@
               <span>Lento</span>
               <span>Rápido</span>
           </div>
-          <input type="range" id="animSpeed" min="0.0" max="3.0" step="0.1" value="1">
+          <input type="range" id="animSpeed" min="0.1" max="3.0" step="0.1" value="1">
       </div>
   </div>
 
@@ -258,7 +258,7 @@
                   scale="0 0 0"
                   position="0 0 0"
                   rotation="50 0 0"
-                  auto-rotate="speed: 1">
+                  animation-mixer="clip: *; loop: repeat; timeScale: 1">
         </a-entity>
     </a-entity>
 
@@ -277,8 +277,8 @@
 
       <p>
         O <strong>Móveis Pro-AR</strong> é uma experiência em Realidade Aumentada que permite visualizar móveis em 3D no seu ambiente real,
-        direto pelo navegador. Com poucos toques, você posiciona, ajusta o tamanho e explora o modelo no espaço,
-        facilitando a decisão de compra e ajudando a imaginar como o móvel vai ficar antes de escolher.
+  direto pelo navegador. Com poucos toques, você posiciona, ajusta o tamanho e explora o modelo no espaço,
+  facilitando a decisão de compra e ajudando a imaginar como o móvel vai ficar antes de escolher.
       </p>
 
       <div class="info-chip">Dica: abra no Chrome para melhor desempenho.</div>
@@ -318,17 +318,6 @@
     </div>
   </div>
 
-  <!-- Componente A-Frame para rotacao automatica (sem animacao no GLB) -->
-  <script>
-    AFRAME.registerComponent('auto-rotate', {
-      schema: { speed: { type: 'number', default: 1 } }, // rad/s (aprox)
-      tick: function (time, timeDelta) {
-        const speed = this.data.speed;
-        this.el.object3D.rotation.y += (timeDelta / 1000) * speed;
-      }
-    });
-  </script>
-
   <script>
     const videoElement = document.getElementById('inputVideo');
     const canvasElement = document.getElementById('outputCanvas');
@@ -355,9 +344,6 @@
     let startX = 0;
     let isPaused = false;
 
-    // Velocidade inicial da rotacao
-    flower.setAttribute('auto-rotate', 'speed', parseFloat(speedSlider.value));
-
     // Abrir modal
     infoBtn.addEventListener('click', () => {
       infoModal.style.display = 'flex';
@@ -382,26 +368,26 @@
       if (e.key === 'Escape' && infoModal.style.display === 'flex') closeModal();
     });
 
-    // Pause/Play agora controla a rotacao
+    // Logica pause/play
     pauseBtn.addEventListener('click', () => {
         isPaused = !isPaused;
         if (isPaused) {
             pauseBtn.innerText = "▶️";
-            flower.setAttribute('auto-rotate', 'speed', 0);
+            flower.setAttribute('animation-mixer', 'timeScale', 0);
         } else {
             pauseBtn.innerText = "⏸️";
-            flower.setAttribute('auto-rotate', 'speed', parseFloat(speedSlider.value));
+            flower.setAttribute('animation-mixer', 'timeScale', speedSlider.value);
         }
     });
 
-    // Slider controla a velocidade da rotacao
+    // Logica slider
     speedSlider.addEventListener('input', (e) => {
         if (!isPaused) {
-            flower.setAttribute('auto-rotate', 'speed', parseFloat(e.target.value));
+            flower.setAttribute('animation-mixer', 'timeScale', e.target.value);
         }
     });
 
-    // Touch rotacao manual quando fixado
+    // Touch rotacao quando fixado
     document.addEventListener('touchstart', (e) => { if(isPinned) startX = e.touches[0].clientX; }, {passive:true});
     document.addEventListener('touchmove', (e) => {
         if (isPinned) {
