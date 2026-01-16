@@ -172,11 +172,14 @@
     <a-entity id="cam" camera="near:0.01; far:100; fov: 70" position="0 0 0"></a-entity>
 
     <a-entity id="arObject" position="0 0 -2" visible="false">
-      <a-entity id="flower"
-                gltf-model="assets/rosa.glb"
-                scale="0 0 0"
-                position="0 0 0"
-                rotation="50 0 0">
+      <!-- ✅ ROTATOR: gira no proprio eixo, sem depender de pontos da mao -->
+      <a-entity id="rotator" position="0 0 0" rotation="0 0 0">
+        <a-entity id="flower"
+                  gltf-model="assets/rosa.glb"
+                  scale="0 0 0"
+                  position="0 0 0"
+                  rotation="50 0 0">
+        </a-entity>
       </a-entity>
     </a-entity>
 
@@ -241,6 +244,7 @@
     const canvasCtx = canvasElement.getContext('2d');
 
     const arObject = document.getElementById('arObject');
+    const rotator = document.getElementById('rotator');
     const flower = document.getElementById('flower');
     const pinBtn = document.getElementById('pinBtn');
     const hintText = document.getElementById('hintText');
@@ -271,7 +275,7 @@
     infoModal.addEventListener('click', (e) => { if (e.target === infoModal) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && infoModal.style.display === 'flex') closeModal(); });
 
-    // Rotacao manual SOMENTE no eixo Y quando fixado
+    // ✅ Rotacao manual SOMENTE no eixo Y, aplicada no ROTATOR (pai)
     document.addEventListener('touchstart', (e) => {
       if (isPinned) startX = e.touches[0].clientX;
     }, { passive: true });
@@ -280,7 +284,7 @@
       if (!isPinned) return;
 
       const deltaX = e.touches[0].clientX - startX;
-      flower.object3D.rotation.y += deltaX * 0.01; // eixo Y
+      rotator.object3D.rotation.y += deltaX * 0.01; // eixo Y no proprio eixo
       startX = e.touches[0].clientX;
     }, { passive: true });
 
