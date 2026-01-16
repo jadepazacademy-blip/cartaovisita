@@ -2,206 +2,493 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>🌱 Experiência AR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>🌱 AR - Controle Total</title>
 
-  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  <script src="https://raw.githack.com/fcor/arjs-gestures/master/dist/gestures.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.min.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: 'Poppins', sans-serif;
-      background: #f5e4b8;
+    body{ margin:0; overflow:hidden; background:#000; font-family:'Poppins',sans-serif; }
+    .media-container { position: fixed; inset: 0; z-index: 1; }
+    video, canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: none; }
+    a-scene{ position:fixed; inset:0; z-index:2; pointer-events:none;}
+
+    /* ESTILOS VISUAIS */
+    .hint {
+        position: fixed; bottom: 140px; left: 50%; transform: translateX(-50%);
+        padding: 12px 24px; border-radius: 30px;
+        font-size: 13px; font-weight: 500;
+        z-index: 10; text-align: center; pointer-events: none;
+        width: max-content; max-width: 85%;
+        background: rgba(20, 20, 20, 0.3);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: white;
     }
 
-    #startScreen {
+    .glass-btn {
+        position: fixed; z-index: 100;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 12px 24px; text-decoration: none;
+        font-weight: 600; font-size: 14px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        cursor: pointer; user-select: none;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+    .glass-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
+
+    #backBtn { top: 20px; left: 20px; }
+
+    /* Botao de informacoes */
+    #infoBtn {
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border-radius: 999px;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    #pinBtn {
+        bottom: 30px; left: 50%; transform: translateX(-50%);
+        width: max-content;
+    }
+    #pinBtn.pinned {
+        background: rgba(255, 50, 50, 0.25); border-color: rgba(255, 100, 100, 0.6);
+        box-shadow: 0 0 15px rgba(255, 50, 50, 0.3);
+    }
+
+    /* CONTROLE DE VELOCIDADE + PAUSE */
+    #controlsContainer {
+        display: none;
+        position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+        z-index: 100;
+        width: 90%; max-width: 350px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 15px 20px; border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        display: flex;
+        align-items: center; gap: 15px;
+        color: white; font-size: 12px; font-weight: bold;
+    }
+
+    #pauseBtn {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.4);
+        border-radius: 50%; width: 40px; height: 40px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px; cursor: pointer;
+    }
+
+    .slider-wrapper { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
+
+    input[type=range] { width: 100%; -webkit-appearance: none; appearance: none; background: transparent; }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 20px; width: 20px;
+        border-radius: 50%; background: #ffffff;
+        cursor: pointer; margin-top: -8px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%; height: 4px; cursor: pointer;
+        background: rgba(255,255,255,0.3); border-radius: 2px;
+    }
+
+    /* MODAL DE INFORMACOES */
+    .info-modal {
       position: fixed;
       inset: 0;
-      display: flex;
-      flex-direction: column;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 250;
+      display: none;
+      align-items: center;
       justify-content: center;
-      align-items: center;
-      text-align: center;
-      background: linear-gradient(180deg, #a8d5a2 0%, #f2e0a2 45%, #f6c86e 100%);
-      padding: 6vh 5vw;
-      box-sizing: border-box;
-      overflow-y: auto;
-      z-index: 1000;
-    }
-
-    #startScreen h1 {
-      font-size: clamp(26px, 6vw, 36px);
-      font-weight: 800;
-      color: #3b3820;
-      margin-bottom: 2vh;
-      text-shadow: 2px 2px 0 #f5e19f, 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    #startScreen p {
-      font-size: clamp(14px, 4vw, 17px);
-      color: #3b3820;
-      line-height: 1.5em;
-      max-width: 420px;
-      margin: 1.2vh 0;
-    }
-
-    /* Card do marcador */
-    .marker-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: linear-gradient(20deg, #fff8e1 0%, #f1e0b0 100%);
-      border-radius: 18px;
       padding: 18px;
-      margin: 15px 0 23px 0;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.7);
-      width: 85%;
-      max-width: 320px;
     }
 
-    .marker-title {
-      font-weight: 600;
-      font-size: clamp(14px, 4vw, 16px);
-      color: #4c3b16;
-      margin-bottom: 10px;
-      letter-spacing: 0.3px;
-    }
-
-    .marker-frame {
-      background: #fdf6e3;
-      border: 3px solid #d4b673;
-      border-radius: 12px;
-      padding: 8px;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.15);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .marker-img {
+    .info-content {
+      position: relative;
       width: 100%;
-      max-width: 200px;
-      aspect-ratio: 1 / 1;
-      object-fit: contain;
-      border-radius: 10px;
-      background: #fff;
-      display: block;
-    }
-
-    /* Botão */
-    #startBtn {
-      margin-top: 3vh;
-      padding: 1em 2.8em;
-      font-size: clamp(15px, 4vw, 18px);
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(160deg, #f6d36b, #d5a55a);
-      color: #3b2b1f;
-      font-weight: 700;
-      box-shadow: 0 6px 0 #b3833c, 0 4px 12px rgba(0,0,0,0.3);
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-
-    #startBtn:active {
-      transform: translateY(3px);
-      box-shadow: 0 3px 0 #b3833c;
-    }
-
-    .credit, .instruction {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.5);
+      max-width: 440px;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: rgba(30, 30, 30, 0.78);
+      border-radius: 22px;
+      padding: 22px 18px 18px 18px;
       color: white;
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: clamp(10px, 3vw, 14px);
-      white-space: nowrap;
-      z-index: 999;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
     }
 
-    .credit { bottom: 10px; }
-    .instruction { top: 10px; }
-    .credit a { color: #f7d46b; text-decoration: none; }
-    .credit a:hover { text-decoration: underline; }
+    .info-content h2 {
+      margin: 8px 0 10px 0;
+      font-size: 18px;
+    }
+
+    .info-content h3 {
+      margin: 16px 0 8px 0;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .info-content p {
+      margin: 0 0 10px 0;
+      font-size: 13px;
+      line-height: 1.45;
+      opacity: 0.95;
+    }
+
+    .info-content ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .info-content li { margin: 6px 0; }
+
+    .info-content a {
+      color: #b4aaff;
+      text-decoration: none;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .info-content a:active { opacity: 0.85; }
+
+    #closeInfo {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.95;
+    }
+
+    /* Imagem do cartao (girls.png) */
+    .card-asset {
+      width: min(220px, 70%);
+      display: block;
+      margin: 12px auto 6px auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.35);
+    }
+
+    .muted {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-top: 6px;
+    }
   </style>
 </head>
-
 <body>
-  <div id="startScreen">
-    <h1>🌿 Experiência AR</h1>
 
-    <p><b>Passo 1:</b> Imprima ou tire um print do marcador <b>Hiro</b> abaixo👇</p>
+  <a href="modelos.html" id="backBtn" class="glass-btn">← Voltar</a>
 
-    <!-- Card do marcador -->
-    <div class="marker-card">
-      <p class="marker-title">🪶 Marcador Hiro</p>
-      <div class="marker-frame">
-        <img src="assets/hiro.png" alt="Marcador Hiro" class="marker-img">
-        
+  <!-- Botao de informacoes -->
+  <button id="infoBtn" class="glass-btn" aria-label="Informações do projeto" title="Informações">ℹ️</button>
+
+  <button id="pinBtn" class="glass-btn">📍 Fixar Posição</button>
+
+  <div id="controlsContainer" style="display: none;">
+      <button id="pauseBtn">⏸️</button>
+
+      <div class="slider-wrapper">
+          <div style="display:flex; justify-content:space-between; width:100%;">
+              <span>Lento</span>
+              <span>Rápido</span>
+          </div>
+          <input type="range" id="animSpeed" min="0.1" max="3.0" step="0.1" value="1">
       </div>
-    </div>
-
-    <p><b>Passo 2:</b> Toque em <b>Começar</b> e direcione a câmera para o marcador.</p>
-
-    <p><b>Passo 3:</b> Interaja com o modelo 3D:<br>
-      👉 Toque com um dedo para girar<br>
-      👉 Use dois dedos para ajustar o tamanho
-    </p>
-
-    <button id="startBtn">Começar</button>
   </div>
 
-  <!-- Cena AR -->
-  <a-scene embedded arjs="sourceType: webcam;" gesture-detector>
-    <a-entity camera></a-entity>
-    <a-marker preset="hiro">
-      <a-entity id="model"
-        gltf-model="url(assets/onion_shrub.glb)"
-        scale="0.2 0.2 0.2"
-        position="0 0 0"
-        rotation="0 0 0"
-        gesture-handler="minScale: 0.1; maxScale: 1;"
-        animation-mixer="clip:*; loop: repeat; autoplay: false;">
-      </a-entity>
-      <a-light type="ambient" color="#ffffff" intensity="2"></a-light>
-      <a-light type="directional" intensity="0.8" position="-1 4 5"></a-light>
-    </a-marker>
+  <div class="media-container">
+    <video id="inputVideo" playsinline muted></video>
+    <canvas id="outputCanvas"></canvas>
+  </div>
+
+  <div class="hint" id="hintText">
+    Bem vido a nossa experiência em AR! A Borboleta nascerá no centro da palma, utilize o polegar e o indicador para controlar a escala!
+  </div>
+
+  <a-scene embedded vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-entity id="cam" camera="near:0.01; far:100; fov: 70" position="0 0 0"></a-entity>
+
+    <a-entity id="arObject" position="0 0 -2" visible="false">
+        <a-entity id="flower"
+                  gltf-model="assets/rosa.glb"
+                  scale="0 0 0"
+                  position="0 0 0"
+                  rotation="50 0 0"
+                  animation-mixer="clip: *; loop: repeat; timeScale: 1">
+        </a-entity>
+    </a-entity>
+
+    <a-entity light="type:ambient; intensity:1.5;"></a-entity>
+    <a-entity light="type:directional; intensity:2;" position="1 4 3"></a-entity>
   </a-scene>
 
-  <div class="instruction">👉 Toque no objeto para iniciar/parar a animação</div>
-  <div class="credit">
-    Modelo 3D por <a href="https://sketchfab.com/3d-models/onion-shrub-0be82a8f365b45dcbd25c6e395b4ec5d" target="_blank">DogOnAKeyboard</a>
+  <!-- Modal de informacoes -->
+  <div id="infoModal" class="info-modal" aria-hidden="true">
+    <div class="info-content" role="dialog" aria-modal="true" aria-label="Informações do projeto">
+      <button id="closeInfo" aria-label="Fechar">✕</button>
+
+      <h2>🦋 Bem-vindo ao nosso cartão visita</h2>
+
+      <img class="card-asset" src="assets/girls.png" alt="MobiliAR Girls" />
+
+      <p>
+        O <strong>Móveis Pro-AR</strong> é uma experiência em Realidade Aumentada que permite visualizar móveis em 3D no seu ambiente real,
+  direto pelo navegador. Com poucos toques, você posiciona, ajusta o tamanho e explora o modelo no espaço,
+  facilitando a decisão de compra e ajudando a imaginar como o móvel vai ficar antes de escolher.
+      </p>
+
+      <div class="info-chip">Dica: abra no Chrome para melhor desempenho.</div>
+
+      <h3>🔗 Links do Projeto</h3>
+      <ul>
+        <li>
+          <a href="https://admirable-pithivier-8cf0de.netlify.app" target="_blank" rel="noopener noreferrer">
+            🌐 Acessar a nossa aplicação
+          </a>
+        </li>
+      </ul>
+
+      <h3>📬 Entre em contato conosco</h3>
+      <ul>
+        <li>
+          <a href="https://www.linkedin.com/in/jade-paz/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" rel="noopener noreferrer">
+            Jade Paz
+          </a>
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/nataliaramosdev/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" rel="noopener noreferrer">
+            Natália Ramos
+          </a>
+        </li>
+      </ul>
+
+      <h3>🦋 Direitos autorais do asset (Borboleta)</h3>
+      <p>
+        <a href="https://sketchfab.com/3d-models/ulysses-butterfly-1155effb97564974aa0553db3d5eed57" target="_blank" rel="noopener noreferrer">
+          Ulysses Butterfly (Sketchfab)
+        </a>
+      </p>
+      <p class="muted">
+        Uso apenas para fins educacionais e demonstrativos. Direitos reservados ao autor.
+      </p>
+    </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const model = document.querySelector('#model');
-      const startBtn = document.getElementById('startBtn');
-      const startScreen = document.getElementById('startScreen');
-      let isPlaying = false;
-      let rotation = { x: 0, y: 0, z: 0 };
+    const videoElement = document.getElementById('inputVideo');
+    const canvasElement = document.getElementById('outputCanvas');
+    const canvasCtx = canvasElement.getContext('2d');
+    const arObject = document.getElementById('arObject');
+    const flower = document.getElementById('flower');
+    const pinBtn = document.getElementById('pinBtn');
+    const hintText = document.getElementById('hintText');
+    const camEl = document.getElementById('cam');
 
-      model.addEventListener('click', () => {
-        model.setAttribute('animation-mixer', { timeScale: isPlaying ? 0 : 1 });
-        isPlaying = !isPlaying;
-      });
+    // Controles UI
+    const controlsContainer = document.getElementById('controlsContainer');
+    const speedSlider = document.getElementById('animSpeed');
+    const pauseBtn = document.getElementById('pauseBtn');
 
-      model.addEventListener("onefingermove", (event) => {
-        rotation.x += event.detail.positionChange.y * 0.5;
-        rotation.y += event.detail.positionChange.x * 0.5;
-        model.setAttribute("rotation", `${rotation.x} ${rotation.y} ${rotation.z}`);
-      });
+    // Modal info
+    const infoBtn = document.getElementById('infoBtn');
+    const infoModal = document.getElementById('infoModal');
+    const closeInfo = document.getElementById('closeInfo');
 
-      startBtn.addEventListener('click', () => {
-        startScreen.style.display = "none";
-      });
+    let currentPos = new THREE.Vector3(0, 0, -2);
+    let currentScale = 0;
+    let isPinned = false;
+    let startX = 0;
+    let isPaused = false;
+
+    // Abrir modal
+    infoBtn.addEventListener('click', () => {
+      infoModal.style.display = 'flex';
+      infoModal.setAttribute('aria-hidden', 'false');
     });
+
+    // Fechar modal
+    function closeModal() {
+      infoModal.style.display = 'none';
+      infoModal.setAttribute('aria-hidden', 'true');
+    }
+
+    closeInfo.addEventListener('click', closeModal);
+
+    // Fecha clicando fora do conteudo
+    infoModal.addEventListener('click', (e) => {
+      if (e.target === infoModal) closeModal();
+    });
+
+    // Fecha com ESC (desktop)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && infoModal.style.display === 'flex') closeModal();
+    });
+
+    // Logica pause/play
+    pauseBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        if (isPaused) {
+            pauseBtn.innerText = "▶️";
+            flower.setAttribute('animation-mixer', 'timeScale', 0);
+        } else {
+            pauseBtn.innerText = "⏸️";
+            flower.setAttribute('animation-mixer', 'timeScale', speedSlider.value);
+        }
+    });
+
+    // Logica slider
+    speedSlider.addEventListener('input', (e) => {
+        if (!isPaused) {
+            flower.setAttribute('animation-mixer', 'timeScale', e.target.value);
+        }
+    });
+
+    // Touch rotacao quando fixado
+    document.addEventListener('touchstart', (e) => { if(isPinned) startX = e.touches[0].clientX; }, {passive:true});
+    document.addEventListener('touchmove', (e) => {
+        if (isPinned) {
+            const deltaX = e.touches[0].clientX - startX;
+            flower.object3D.rotation.y += deltaX * 0.01;
+            startX = e.touches[0].clientX;
+        }
+    }, {passive:true});
+
+    pinBtn.addEventListener('click', () => {
+        const isVisible = arObject.getAttribute('visible');
+        if (!isVisible && !isPinned) { alert("Mostre a mão primeiro!"); return; }
+
+        isPinned = !isPinned;
+
+        if (isPinned) {
+            pinBtn.innerText = "🔓 Soltar";
+            pinBtn.classList.add('pinned');
+            hintText.style.display = 'none';
+            controlsContainer.style.display = 'flex';
+        } else {
+            pinBtn.innerText = "📍 Fixar";
+            pinBtn.classList.remove('pinned');
+            hintText.style.display = 'block';
+            controlsContainer.style.display = 'none';
+        }
+    });
+
+    // Logica AR
+    function getTriangleCenter(landmarks) {
+        const p0 = landmarks[0];
+        const p5 = landmarks[5];
+        const p17 = landmarks[17];
+        return { x: (p0.x + p5.x + p17.x) / 3, y: (p0.y + p5.y + p17.y) / 3 };
+    }
+
+    function getHandAperture(landmarks) {
+        const dx = landmarks[4].x - landmarks[8].x;
+        const dy = landmarks[4].y - landmarks[8].y;
+        let scale = Math.max(0, (Math.sqrt(dx*dx + dy*dy) - 0.02) * 15);
+        return Math.min(scale, 0.8);
+    }
+
+    function updateAR(landmarks) {
+        if (isPinned) return;
+
+        arObject.setAttribute('visible', true);
+        const center = getTriangleCenter(landmarks);
+        const threeCamera = camEl.getObject3D('camera');
+        const ndcX = (center.x * 2) - 1;
+        const ndcY = -(center.y * 2) + 1;
+        const vector = new THREE.Vector3(ndcX, ndcY, 0.5);
+        vector.unproject(threeCamera);
+        const dir = vector.sub(threeCamera.position).normalize();
+        const distance = 2;
+        const targetPos = threeCamera.position.clone().add(dir.multiplyScalar(distance));
+
+        currentPos.lerp(targetPos, 0.2);
+        arObject.object3D.position.copy(currentPos);
+
+        const targetScale = getHandAperture(landmarks);
+        currentScale += (targetScale - currentScale) * 0.15;
+        flower.object3D.scale.set(currentScale, currentScale, currentScale);
+    }
+
+    const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+    hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+
+    hands.onResults(results => {
+      canvasElement.width = videoElement.videoWidth;
+      canvasElement.height = videoElement.videoHeight;
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+
+        if (!isPinned) {
+            const p0 = landmarks[0]; const p5 = landmarks[5]; const p17 = landmarks[17];
+            canvasCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            [p0, p5, p17].forEach(p => {
+                canvasCtx.beginPath();
+                canvasCtx.arc(p.x * canvasElement.width, p.y * canvasElement.height, 3, 0, 2 * Math.PI);
+                canvasCtx.fill();
+            });
+            const center = getTriangleCenter(landmarks);
+            canvasCtx.beginPath();
+            canvasCtx.arc(center.x * canvasElement.width, center.y * canvasElement.height, 4, 0, 2 * Math.PI);
+            canvasCtx.fillStyle = "rgba(255, 255, 0, 0.5)";
+            canvasCtx.fill();
+        }
+        updateAR(landmarks);
+      } else {
+        if (!isPinned) { arObject.setAttribute('visible', false); currentScale = 0; }
+      }
+    });
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => { await hands.send({image: videoElement}); },
+      width: 640, height: 480, facingMode: 'environment'
+    });
+    camera.start();
   </script>
 </body>
 </html>
