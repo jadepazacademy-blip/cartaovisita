@@ -150,6 +150,17 @@
     }
 
     .muted { font-size: 12px; opacity: 0.85; margin-top: 6px; }
+
+    /* ✅ Ajuste do botão X em telas menores (evita grudar no título) */
+    @media (max-width: 420px) {
+      #closeInfo {
+        top: 16px;
+        right: 16px;
+      }
+      .info-content h2 {
+        padding-right: 48px; /* espaço para o X */
+      }
+    }
   </style>
 </head>
 <body>
